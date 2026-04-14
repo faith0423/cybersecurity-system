@@ -1,0 +1,19 @@
+# Node
+frontend/node_modules
+frontend/dist
+
+# Angular
+frontend/.angular
+
+# Java / Spring
+backend/target
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Env files
+.env
