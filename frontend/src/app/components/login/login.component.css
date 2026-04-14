@@ -1,0 +1,119 @@
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background:
+    radial-gradient(circle at top left, rgba(139, 92, 246, 0.35), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.35), transparent 28%),
+    linear-gradient(135deg, #0f172a, #111827 55%, #1e1b4b);
+}
+
+.login-card {
+  width: min(100%, 460px);
+  padding: 2rem;
+  border-radius: 28px;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(147, 112, 219, 0.3);
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.45);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.16);
+  color: #d8b4fe;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.intro h1 {
+  margin: 1rem 0 0.7rem;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.intro p {
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+label {
+  display: grid;
+  gap: 0.45rem;
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+input {
+  padding: 0.95rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+}
+
+button {
+  padding: 1rem;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #8b5cf6, #2563eb);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.error {
+  margin: 0;
+  color: #fca5a5;
+}
+
+.tip-box {
+  margin-top: 1.3rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tip-box h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+}
+
+.tip-box code {
+  color: #bfdbfe;
+}
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.logo-box {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25);
+}
+
+.logo-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}

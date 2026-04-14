@@ -1,0 +1,6 @@
+POST http://localhost:8080/api/ai/analyze
+Content-Type: application/json
+
+{
+  "description": "User clicked a suspicious email link"
+}

@@ -1,0 +1,28 @@
+<nav class="navbar">
+  <div class="navbar-brand">
+
+    <div class="logo-box">
+      <img src="assets/logo.png" alt="Cyber Incident Shield Logo" class="logo-img" />
+    </div>
+
+    <div class="brand-text">
+      <span class="brand-title">Cyber Incident Management</span>
+      <span class="brand-subtitle">Threat visibility &amp; response</span>
+    </div>
+  </div>
+
+  <div class="navbar-links">
+    <a *ngIf="isAdmin" routerLink="/dashboard" routerLinkActive="active-link">Dashboard</a>
+    <a routerLink="/incidents" routerLinkActive="active-link">
+      {{ isAdmin ? 'Incidents' : 'My Incidents' }}
+    </a>
+  </div>
+
+  <div class="navbar-actions">
+    <span class="user-email">{{ userEmail }}</span>
+    <span class="role-badge" [class.admin-badge]="isAdmin">
+      {{ isAdmin ? 'Admin' : 'Specialist' }}
+    </span>
+    <button type="button" class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+</nav>

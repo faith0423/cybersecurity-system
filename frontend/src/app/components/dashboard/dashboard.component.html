@@ -1,0 +1,100 @@
+<div class="page-shell">
+  <app-navbar></app-navbar>
+
+  <section class="hero-card">
+    <div>
+      <p class="eyebrow">Security Operations Centre</p>
+      <h1>Threat monitoring dashboard</h1>
+      <p class="subtext">
+        Live overview of all incidents. Refreshes every 15 seconds — specialist updates appear automatically.
+      </p>
+    </div>
+    <a routerLink="/incidents" class="hero-link">View all incidents</a>
+  </section>
+
+  <ng-container *ngIf="!loading; else loadingState">
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span>Total Incidents</span>
+        <h2>{{ total }}</h2>
+      </article>
+      <article class="stat-card">
+        <span>Submitted</span>
+        <h2>{{ submitted }}</h2>
+      </article>
+      <article class="stat-card stat-card-active">
+        <span>In Progress</span>
+        <h2>{{ inProgress }}</h2>
+      </article>
+      <article class="stat-card stat-card-solved">
+        <span>Solved</span>
+        <h2>{{ solved }}</h2>
+      </article>
+    </section>
+
+    <section class="insight-card">
+      <div class="insight-header">
+        <h3>AI Trend Insight</h3>
+        <span class="insight-badge">Live Analysis</span>
+      </div>
+      <p class="insight-line"><strong>Most common category:</strong> {{ topCategory }}</p>
+      <p class="insight-line"><strong>Recommended response:</strong> {{ topRecommendation }}</p>
+      <p class="summary-line">{{ summarySentence }}</p>
+    </section>
+
+    <section class="insight-grid">
+      <article class="chart-card">
+        <h3>Incidents by Category</h3>
+        <canvas id="categoryChart"></canvas>
+      </article>
+      <article class="chart-card">
+        <h3>Incidents by Severity</h3>
+        <canvas id="severityChart"></canvas>
+      </article>
+    </section>
+
+    <section class="table-card">
+      <div class="section-header">
+        <h3>Recent incidents</h3>
+        <a routerLink="/incidents">View all</a>
+      </div>
+
+      <div class="table-wrapper" *ngIf="recentIncidents.length; else emptyState">
+        <table>
+          <thead>
+            <tr>
+              <th>Logged By</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Severity</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let incident of recentIncidents">
+              <td>{{ incident.createdBy || 'Unknown' }}</td>
+              <td>{{ incident.title }}</td>
+              <td>{{ incident.category || '—' }}</td>
+              <td><span [class]="severityClass(incident.severity)">{{ incident.severity || '—' }}</span></td>
+              <td><span [class]="statusClass(incident.status)">{{ incident.status || 'SUBMITTED' }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </ng-container>
+</div>
+
+<ng-template #loadingState>
+  <div class="page-shell">
+    <section class="table-card" style="padding:2rem;text-align:center;color:#94a3b8">
+      Loading dashboard...
+    </section>
+  </div>
+</ng-template>
+
+<ng-template #emptyState>
+  <p class="empty">No incidents logged yet.</p>
+</ng-template>

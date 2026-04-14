@@ -1,0 +1,46 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="logo-wrapper">
+  <div class="logo-box">
+    <img src="assets/logo.png" alt="Logo" class="logo-img" />
+  </div>
+</div>
+    <div class="intro">
+      <span class="badge">Secure Access</span>
+      <h1>Cybersecurity Incident Intelligence Database</h1>
+      <p>
+        Sign in.
+      </p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="submit()">
+      <label>
+        Email
+        <input type="email" formControlName="email" placeholder="name@gmail.com" />
+      </label>
+
+      <p class="field-error" *ngIf="emailControl.touched && emailControl.hasError('required')">
+        Email is required.
+      </p>
+
+      <p class="field-error" *ngIf="emailControl.touched && emailControl.hasError('email')">
+        Please enter a valid email address.
+      </p>
+
+      <label>
+        Password
+        <input type="password" formControlName="password" placeholder="Enter your password" />
+      </label>
+
+      <p class="field-error" *ngIf="passwordControl.touched && passwordControl.hasError('required')">
+        Password is required.
+      </p>
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Signing in...' : 'Login' }}
+      </button>
+    </form>
+  </div>
+</div>

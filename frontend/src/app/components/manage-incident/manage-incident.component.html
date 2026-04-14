@@ -1,0 +1,100 @@
+<div class="page-shell">
+  <app-navbar></app-navbar>
+
+  <section class="manage-card" *ngIf="!loading && incident; else loadingState">
+    <div class="header-row">
+      <div>
+        <h2>Manage Incident</h2>
+        <p class="muted">View full incident details and update the current status.</p>
+      </div>
+      <button type="button" class="back-btn" (click)="goBack()">Back to list</button>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="label">Title</span>
+        <p>{{ incident.title }}</p>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">Logged By</span>
+        <p>{{ incident.createdBy || 'Unknown' }}</p>
+      </div>
+
+      <div class="detail-item full">
+        <span class="label">Description</span>
+        <p>{{ incident.description }}</p>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">Severity</span>
+        <p>{{ incident.severity }}</p>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">Category</span>
+        <p>{{ incident.category || 'Uncategorized' }}</p>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">Assigned Role</span>
+        <p>{{ incident.assignedRole || 'Unassigned' }}</p>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">Current Status</span>
+        <p>{{ incident.status }}</p>
+      </div>
+
+      <div class="detail-item full">
+        <span class="label">Recommendation</span>
+        <p>{{ incident.recommendation || 'No recommendation available.' }}</p>
+      </div>
+    </div>
+
+    <div class="action-box" *ngIf="!isAdmin">
+      <h3>Status Actions</h3>
+      <p class="muted">
+        Update the incident status as you work on it.
+       
+      </p>
+
+      <div class="action-buttons">
+        <button
+          type="button"
+          class="fixing-btn"
+          [disabled]="updating || incident.status !== 'ASSIGNED'"
+          (click)="updateStatus('FIXING')"
+        >
+          {{ updating ? 'Updating...' : 'Mark as FIXING' }}
+        </button>
+
+        <button
+          type="button"
+          class="solved-btn"
+          [disabled]="updating || incident.status !== 'FIXING'"
+          (click)="updateStatus('SOLVED')"
+        >
+          {{ updating ? 'Updating...' : 'Mark as SOLVED' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="action-box" *ngIf="isAdmin">
+      <h3>Admin View</h3>
+      <p class="muted">
+        Admin can monitor this incident here, but specialist users are responsible for changing its status.
+      </p>
+    </div>
+
+    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  </section>
+</div>
+
+<ng-template #loadingState>
+  <div class="page-shell">
+    <app-navbar></app-navbar>
+    <section class="manage-card">Loading incident...</section>
+  </div>
+</ng-template>

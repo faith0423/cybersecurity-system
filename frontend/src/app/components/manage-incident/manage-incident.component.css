@@ -1,0 +1,119 @@
+.page-shell {
+  min-height: 100vh;
+  padding: 1.25rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background:
+    radial-gradient(circle at top left, rgba(139, 92, 246, 0.25), transparent 25%),
+    radial-gradient(circle at right, rgba(59, 130, 246, 0.2), transparent 20%),
+    linear-gradient(135deg, #020617, #0f172a 45%, #1e1b4b);
+}
+
+.manage-card {
+  padding: 1.5rem;
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 20px 45px rgba(2, 6, 23, 0.32);
+  color: #f8fafc;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-btn,
+.fixing-btn,
+.solved-btn {
+  border: none;
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  font-weight: 700;
+  color: white;
+}
+
+.back-btn {
+  background: linear-gradient(135deg, #64748b, #475569);
+}
+
+.fixing-btn {
+  background: linear-gradient(135deg, #8b5cf6, #2563eb);
+}
+
+.solved-btn {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.detail-item {
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.detail-item.full {
+  grid-column: 1 / -1;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #c4b5fd;
+  text-transform: uppercase;
+}
+
+.action-box {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.muted {
+  color: #cbd5e1;
+}
+
+.error {
+  color: #fca5a5;
+  margin-top: 1rem;
+}
+
+@media (max-width: 800px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+.success {
+  color: #86efac;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.error {
+  color: #fca5a5;
+  margin-top: 1rem;
+  font-weight: 600;
+}

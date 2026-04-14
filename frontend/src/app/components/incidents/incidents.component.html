@@ -1,0 +1,168 @@
+<app-navbar></app-navbar>
+
+<div class="incidents-page">
+  <div class="incidents-card">
+
+    <!-- ───── ADMIN: Log a new incident ───── -->
+    <ng-container *ngIf="isAdmin">
+      <div class="section-heading">
+        <h2>Log New Incident</h2>
+        <p class="muted">Submit a new incident.</p>
+      </div>
+
+     <form [formGroup]="incidentForm" (ngSubmit)="submitIncident()" class="incident-form">
+  <div class="form-group">
+    <label for="title">Incident Title</label>
+    <input id="title" type="text" formControlName="title" placeholder="e.g. Suspicious login attempt detected" />
+
+    <span class="field-error" *ngIf="incidentForm.get('title')?.touched && incidentForm.get('title')?.hasError('required')">
+      Title is required.
+    </span>
+
+    <span class="field-error" *ngIf="incidentForm.get('title')?.touched && incidentForm.get('title')?.hasError('minlength')">
+      Title must be at least 3 characters.
+    </span>
+
+    <span class="field-error" *ngIf="incidentForm.get('title')?.touched && incidentForm.get('title')?.hasError('maxlength')">
+      Title cannot be longer than 100 characters.
+    </span>
+
+    <span class="field-error" *ngIf="incidentForm.get('title')?.touched && incidentForm.get('title')?.hasError('mustContainLetters')">
+      Title must contain real text, not only numbers or symbols.
+    </span>
+  </div>
+
+  <div class="form-group">
+    <label for="description">Incident Description</label>
+    <textarea
+      id="description"
+      rows="5"
+      formControlName="description"
+      placeholder="Describe the incident in detail — what happened, when, and any systems affected..."
+    ></textarea>
+
+    <span class="field-error" *ngIf="incidentForm.get('description')?.touched && incidentForm.get('description')?.hasError('required')">
+      Description is required.
+    </span>
+
+    <span class="field-error" *ngIf="incidentForm.get('description')?.touched && incidentForm.get('description')?.hasError('minlength')">
+      Please provide at least 10 characters.
+    </span>
+
+    <span class="field-error" *ngIf="incidentForm.get('description')?.touched && incidentForm.get('description')?.hasError('maxlength')">
+      Description cannot be longer than 1000 characters.
+    </span>
+
+    <span class="field-error" *ngIf="incidentForm.get('description')?.touched && incidentForm.get('description')?.hasError('mustContainLetters')">
+      Description must contain real text, not only numbers or symbols.
+    </span>
+  </div>
+
+  <div class="ai-note">
+    <span class="ai-icon">AI</span>
+  </div>
+
+  <div class="action-buttons">
+    <button type="submit" class="btn primary-btn" [disabled]="submitting">
+      {{ submitting ? 'Analysing & Submitting...' : 'Submit Incident' }}
+    </button>
+
+    <button type="button" class="btn primary-btn" (click)="downloadPdfReport()">
+      Download PDF Report
+    </button>
+
+    <button type="button" class="btn primary-btn" (click)="emailPdfReport()">
+      Email PDF Report
+    </button>
+  </div>
+
+  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+</form>
+    </ng-container>
+
+    <!-- ───── BOTH: Incident list ───── -->
+    <div class="table-section" [class.top-section]="!isAdmin">
+      <div class="section-heading">
+        <h2>{{ isAdmin ? 'All Incidents' : 'My Assigned Incidents' }}</h2>
+        <span class="count-badge">{{ incidents.length }} total</span>
+      </div>
+
+      <div class="search-row" *ngIf="isAdmin">
+  <div class="search-bar">
+
+    <!-- LEFT: Logo -->
+    <img src="assets/logo.png" alt="logo" class="search-logo" />
+
+    <!-- MIDDLE: Input -->
+    <div class="search-input-wrapper">
+      <input
+        type="text"
+        class="search-input"
+        [value]="searchTerm"
+        (input)="onSearchChange($event.target.value)"
+        placeholder="Search..."
+      />
+      <span class="search-icon">🔍</span>
+    </div>
+
+  </div>
+</div>
+
+      <div class="table-wrapper" *ngIf="!loading; else loadingTpl">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Severity</th>
+              <th>Assigned Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let incident of paginatedIncidents">
+              <td>{{ incident.title }}</td>
+              <td>{{ incident.category || '—' }}</td>
+              <td><span [class]="severityClass(incident.severity)">{{ incident.severity || '—' }}</span></td>
+              <td>{{ incident.assignedRole || '—' }}</td>
+              <td><span [class]="statusClass(incident.status)">{{ incident.status || 'SUBMITTED' }}</span></td>
+              <td class="actions-cell">
+                <button type="button" class="manage-btn" (click)="manageIncident(incident.id!)">
+                  Manage
+                </button>
+                <button type="button" class="delete-btn" *ngIf="isAdmin" (click)="deleteIncident(incident.id)">
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="filteredIncidents.length === 0">
+              <td colspan="6" class="empty-row">
+                {{ isAdmin ? 'No incidents logged yet.' : 'No incidents assigned to you yet.' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination" *ngIf="filteredIncidents.length > pageSize">
+        <button type="button" class="page-btn" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <button
+          type="button"
+          class="page-btn"
+          *ngFor="let page of pageNumbers"
+          [class.active-page]="currentPage === page"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+        <button type="button" class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading-row">Loading incidents...</div>
+</ng-template>
