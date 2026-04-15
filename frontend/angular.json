@@ -1,40 +1,26 @@
-{
+﻿{
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
     "cyber-incident-frontend": {
       "projectType": "application",
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular/build:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "outputPath": "dist/cyber-incident-frontend",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public",
-                "output": "/"
-              },
-              {
-                "glob": "**/*",
-                "input": "src/assets",
-                "output": "/assets/"
-                
-
-              }
-              
-            ],
-            "styles": [
-              "src/styles.css"
-            ]
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.css"],
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -43,23 +29,27 @@
                   "type": "initial",
                   "maximumWarning": "500kB",
                   "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kB",
+                  "maximumError": "4kB"
                 }
               ],
               "outputHashing": "all"
             },
             "development": {
               "optimization": false,
+              "sourceMap": true,
               "extractLicenses": false,
-              "sourceMap": true
+              "vendorChunk": true,
+              "buildOptimizer": false
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular/build:dev-server",
-          "options": {
-            "proxyConfig": "proxy.conf.json"
-          },
+          "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "cyber-incident-frontend:build:production"
@@ -72,8 +62,5 @@
         }
       }
     }
-  },
-  "cli": {
-    "analytics": false
   }
 }
