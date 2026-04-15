@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Incident } from '../models/incident.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class IncidentService {
-  private readonly apiUrl = 'http://localhost:8080/api/incidents';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/incidents`;
 
   constructor(private http: HttpClient) {}
 
@@ -43,7 +44,7 @@ export class IncidentService {
   downloadIncidentReport(): Observable<Blob> {
   const token = localStorage.getItem('token');
 
-  return this.http.get('http://localhost:8080/api/reports/incidents/pdf', {
+  return this.http.get(`${environment.apiBaseUrl}/api/reports/incidents/pdf`, {
     responseType: 'blob',
     headers: {
       Authorization: `Bearer ${token}`
@@ -53,7 +54,7 @@ export class IncidentService {
    emailIncidentReport(): Observable<string> {
   const token = localStorage.getItem('token');
 
-  return this.http.post('http://localhost:8080/api/reports/incidents/pdf/email', {}, {
+  return this.http.post(`${environment.apiBaseUrl}/api/reports/incidents/pdf/email`, {}, {
     responseType: 'text',
     headers: {
       Authorization: `Bearer ${token}`
