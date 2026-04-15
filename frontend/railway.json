@@ -1,0 +1,10 @@
+﻿{
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "echo 'Skipping build - using pre-built files'"
+  },
+  "deploy": {
+    "startCommand": "npx serve -s dist/cyber-incident-frontend -l $PORT",
+    "healthcheckPath": "/"
+  }
+}
