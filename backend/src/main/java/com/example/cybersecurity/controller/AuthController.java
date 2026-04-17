@@ -18,10 +18,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = {
+         "https://cyber-incident-system.netlify.app",
         "http://localhost:4200",
         "http://localhost:4201",
         "http://localhost:63404"
-})
+}, allowCredentials = "true")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
