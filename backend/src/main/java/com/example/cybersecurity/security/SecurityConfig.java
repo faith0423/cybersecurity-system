@@ -32,6 +32,7 @@ public class SecurityConfig {
                           CustomUserDetailsService userDetailsService) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userDetailsService = userDetailsService;
+        
     }
 
     @Bean
@@ -82,7 +83,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:4200",
                 "http://localhost:4201",
-                "http://localhost:63404"
+                "http://localhost:63404",
+                 "https://cyber-incident-system.netlify.app"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
