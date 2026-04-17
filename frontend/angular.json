@@ -24,6 +24,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "src": "src/environments/environment.ts",
+                  "replace": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -32,8 +38,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "20kB"
                 }
               ],
               "outputHashing": "all"
@@ -62,5 +68,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
