@@ -7,7 +7,7 @@ import { IncidentAnalysisResponse } from '../models/incident-analysis-response';
   providedIn: 'root'
 })
 export class AiAnalysisService {
-  private apiUrl = '/api/ai';
+  private apiUrl = 'https://cybersecurity-system-production.up.railway.app/api/ai';
 
   constructor(private http: HttpClient) {}
 
