@@ -115,9 +115,9 @@ export class IncidentsComponent implements OnInit {
     });
   }
 
-  onSearchChange(value: string): void {
-   
-    this.searchTerm = (value || '').trim().toLowerCase();
+  onSearchChange(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.searchTerm = (searchValue || '').trim().toLowerCase();
     this.currentPage = 1;
   }
 

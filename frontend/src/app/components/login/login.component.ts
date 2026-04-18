@@ -41,7 +41,7 @@ export class LoginComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    this.http.post<any>('https://cybersecurity-system-production.up.railway.app/api/auth/login', this.loginForm.value)
+    this.http.post<any>('/api/auth/login', this.loginForm.value)
       .subscribe({
         next: (response: any) => {
           // Save token, role and email to localStorage

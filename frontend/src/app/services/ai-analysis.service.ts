@@ -7,7 +7,7 @@ import { IncidentAnalysisResponse } from '../models/incident-analysis-response';
   providedIn: 'root'
 })
 export class AiAnalysisService {
-  private apiUrl = 'http://localhost:8080/api/ai';
+  private apiUrl = '/api/ai';
 
   constructor(private http: HttpClient) {}
 
