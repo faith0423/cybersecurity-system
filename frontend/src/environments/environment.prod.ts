@@ -1,4 +1,4 @@
-export const environment = {
+﻿export const environment = {
   production: true,
-  apiBaseUrl: ''
+  apiBaseUrl: 'https://cybersecurity-system-production.up.railway.app/api'
 };
