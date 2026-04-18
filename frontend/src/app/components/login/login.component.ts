@@ -41,16 +41,15 @@ export class LoginComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    this.http.post<any>('https://cybersecurity-system-production.up.railway.app/api/auth/login', this.loginForm.value)
+    const backendUrl = 'https://cybersecurity-system-production.up.railway.app/api/auth/login';
+    this.http.post<any>(backendUrl, this.loginForm.value)
       .subscribe({
         next: (response: any) => {
           // Save token, role and email to localStorage
           localStorage.setItem('token', response.token);
           localStorage.setItem('role', response.role);
           localStorage.setItem('email', response.email);
-
-          console.log('Login success. Role:', response.role, 'Token saved:', !!response.token);
-
+          
           this.loading = false;
 
           // Route by role
