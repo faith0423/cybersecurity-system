@@ -41,7 +41,7 @@ export class LoginComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    const backendUrl = 'https://cybersecurity-system-production.up.railway.app/api/auth/login';
+    const backendUrl = '/api/auth/login';
     this.http.post<any>(backendUrl, this.loginForm.value)
       .subscribe({
         next: (response: any) => {
