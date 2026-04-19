@@ -8,6 +8,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import jakarta.mail.internet.MimeMessage;
@@ -31,6 +32,7 @@ public class NotificationEmailService {
         this.mailSender = mailSender;
         this.userRepository = userRepository;
     }
+    @Async
 
     public void sendIncidentSolvedNotification(Incident incident, String resolvedBy) {
         List<User> admins = userRepository.findByRole("ADMIN");

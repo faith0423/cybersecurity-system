@@ -6,7 +6,8 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class IncidentService {
-  private readonly apiUrl = '/api/incidents';
+  private readonly baseUrl = `https://cybersecurity-system-production.up.railway.app/api`;  
+  private readonly apiUrl = `${this.baseUrl}/incidents`;
 
   constructor(private http: HttpClient) {}
 
