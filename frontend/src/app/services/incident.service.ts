@@ -6,8 +6,8 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class IncidentService {
-  private readonly baseUrl = `https://cybersecurity-system-production.up.railway.app/api`;  
-  private readonly apiUrl = `${this.baseUrl}/incidents`;
+  private readonly baseUrl = `https://cybersecurity-system-production.up.railway.app`;  
+  private readonly apiUrl = `${this.baseUrl}/api/incidents`;
 
   constructor(private http: HttpClient) {}
 
@@ -45,7 +45,7 @@ export class IncidentService {
   downloadIncidentReport(): Observable<Blob> {
   const token = localStorage.getItem('token');
 
-  return this.http.get(`${environment.apiBaseUrl}/api/reports/incidents/pdf`, {
+  return this.http.get(`${this.baseUrl}/api/reports/incidents/pdf`, {
     responseType: 'blob',
     headers: {
       Authorization: `Bearer ${token}`
@@ -55,7 +55,7 @@ export class IncidentService {
    emailIncidentReport(): Observable<string> {
   const token = localStorage.getItem('token');
 
-  return this.http.post(`${environment.apiBaseUrl}/api/reports/incidents/pdf/email`, {}, {
+  return this.http.post(`${this.baseUrl}/api/reports/incidents/pdf/email`, {}, {
     responseType: 'text',
     headers: {
       Authorization: `Bearer ${token}`

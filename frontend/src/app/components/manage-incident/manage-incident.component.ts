@@ -79,6 +79,7 @@ export class ManageIncidentComponent implements OnInit {
     this.incidentService.updateStatus(this.incident.id, status).subscribe({
       next: (updated: any) => {
         this.incident = updated;
+        this.loadIncident(this.incident.id!);
         this.updating = false;
         this.successMessage = `Status changed to ${updated.status}.`;
         console.log('Status updated successfully:', updated);

@@ -30,6 +30,7 @@
                   "replaceWith": "src/environments/environment.prod.ts"
                 }
               ],
+              "baseHref": "/cybersecurity-system/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
