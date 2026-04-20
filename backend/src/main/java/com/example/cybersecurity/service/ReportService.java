@@ -30,13 +30,13 @@ public class ReportService {
         List<Incident> incidents = incidentRepository.findAll();
 
         int total = incidents.size();
-        int submitted = 0;
         int assigned = 0;
         int fixing = 0;
         int solved = 0;
 
         Map<String, Integer> categoryCounts = new HashMap<>();
         Map<String, Integer> severityCounts = new HashMap<>();
+        Map<String, Integer> specialistCounts = new HashMap<>();
 
         for (Incident incident : incidents) {
             String status = incident.getStatus() == null ? "SUBMITTED" : incident.getStatus().toUpperCase();
@@ -45,7 +45,7 @@ public class ReportService {
                 case "ASSIGNED" -> assigned++;
                 case "FIXING" -> fixing++;
                 case "SOLVED" -> solved++;
-                default -> submitted++;
+                default -> {}
             }
 
             String category = (incident.getCategory() == null || incident.getCategory().isBlank())
@@ -56,8 +56,13 @@ public class ReportService {
                     ? "UNKNOWN"
                     : incident.getSeverity();
 
+            String assignedRole = (incident.getAssignedRole() == null || incident.getAssignedRole().isBlank())
+                    ? "Unassigned"
+                    : incident.getAssignedRole();
+
             categoryCounts.put(category, categoryCounts.getOrDefault(category, 0) + 1);
             severityCounts.put(severity, severityCounts.getOrDefault(severity, 0) + 1);
+            specialistCounts.put(assignedRole, specialistCounts.getOrDefault(assignedRole, 0) + 1);
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -75,7 +80,8 @@ public class ReportService {
 
         addHeader(document, systemNameFont, subtitleFont);
         addTitle(document, titleFont, bodyFont);
-        addSummarySection(document, headingFont, total, submitted, assigned, fixing, solved);
+        addSummarySection(document, headingFont, total, assigned, fixing, solved);
+        addSpecialistSection(document, headingFont, specialistCounts);
         addCategorySection(document, headingFont, categoryCounts);
         addSeveritySection(document, headingFont, severityCounts);
 
@@ -109,7 +115,7 @@ public class ReportService {
         textCell.setBorder(Rectangle.NO_BORDER);
         textCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
-        Paragraph systemName = new Paragraph("Cybersecurity Incident Intelligence Database", systemNameFont);
+        Paragraph systemName = new Paragraph("Cyber Security Incident Management System", systemNameFont);
         systemName.setSpacingAfter(4);
 
         Paragraph subtitle = new Paragraph("Administrative Security Incident Report", subtitleFont);
@@ -124,7 +130,7 @@ public class ReportService {
     }
 
     private void addTitle(Document document, Font titleFont, Font bodyFont) throws Exception {
-        Paragraph title = new Paragraph("IT Security Incident Report", titleFont);
+        Paragraph title = new Paragraph("Administrative Security Incident Report", titleFont);
         title.setAlignment(Element.ALIGN_CENTER);
         title.setSpacingAfter(8);
         document.add(title);
@@ -146,7 +152,7 @@ public class ReportService {
     }
 
     private void addSummarySection(Document document, Font headingFont,
-                                   int total, int submitted, int assigned, int fixing, int solved) throws Exception {
+                                   int total, int assigned, int fixing, int solved) throws Exception {
         document.add(new Paragraph("Incident Summary", headingFont));
         document.add(new Paragraph(" "));
 
@@ -154,22 +160,39 @@ public class ReportService {
         summaryTable.setWidthPercentage(60);
         summaryTable.setSpacingAfter(20);
 
-        addCell(summaryTable, "Total Incidents", true);
-        addCell(summaryTable, String.valueOf(total), false);
+        addCellCentered(summaryTable, "Total Incidents", true);
+        addCellCentered(summaryTable, String.valueOf(total), false);
 
-        addCell(summaryTable, "Submitted", true);
-        addCell(summaryTable, String.valueOf(submitted), false);
+        addCellCentered(summaryTable, "Assigned", true);
+        addCellCentered(summaryTable, String.valueOf(assigned), false);
 
-        addCell(summaryTable, "Assigned", true);
-        addCell(summaryTable, String.valueOf(assigned), false);
+        addCellCentered(summaryTable, "Fixing", true);
+        addCellCentered(summaryTable, String.valueOf(fixing), false);
 
-        addCell(summaryTable, "Fixing", true);
-        addCell(summaryTable, String.valueOf(fixing), false);
-
-        addCell(summaryTable, "Solved", true);
-        addCell(summaryTable, String.valueOf(solved), false);
+        addCellCentered(summaryTable, "Solved", true);
+        addCellCentered(summaryTable, String.valueOf(solved), false);
 
         document.add(summaryTable);
+    }
+
+    private void addSpecialistSection(Document document, Font headingFont,
+                                      Map<String, Integer> specialistCounts) throws Exception {
+        document.add(new Paragraph("Specialist Workload Distribution", headingFont));
+        document.add(new Paragraph(" "));
+
+        PdfPTable specialistTable = new PdfPTable(2);
+        specialistTable.setWidthPercentage(70);
+        specialistTable.setSpacingAfter(20);
+
+        addCellCentered(specialistTable, "Specialist Role", true);
+        addCellCentered(specialistTable, "Incidents Handled", true);
+
+        for (Map.Entry<String, Integer> entry : specialistCounts.entrySet()) {
+            addCellCentered(specialistTable, entry.getKey(), false);
+            addCellCentered(specialistTable, String.valueOf(entry.getValue()), false);
+        }
+
+        document.add(specialistTable);
     }
 
     private void addCategorySection(Document document, Font headingFont,
@@ -181,12 +204,12 @@ public class ReportService {
         categoryTable.setWidthPercentage(70);
         categoryTable.setSpacingAfter(20);
 
-        addCell(categoryTable, "Category", true);
-        addCell(categoryTable, "Count", true);
+        addCellCentered(categoryTable, "Category", true);
+        addCellCentered(categoryTable, "Count", true);
 
         for (Map.Entry<String, Integer> entry : categoryCounts.entrySet()) {
-            addCell(categoryTable, entry.getKey(), false);
-            addCell(categoryTable, String.valueOf(entry.getValue()), false);
+            addCellCentered(categoryTable, entry.getKey(), false);
+            addCellCentered(categoryTable, String.valueOf(entry.getValue()), false);
         }
 
         document.add(categoryTable);
@@ -200,18 +223,18 @@ public class ReportService {
         PdfPTable severityTable = new PdfPTable(2);
         severityTable.setWidthPercentage(70);
 
-        addCell(severityTable, "Severity", true);
-        addCell(severityTable, "Count", true);
+        addCellCentered(severityTable, "Severity", true);
+        addCellCentered(severityTable, "Count", true);
 
         for (Map.Entry<String, Integer> entry : severityCounts.entrySet()) {
-            addCell(severityTable, entry.getKey(), false);
-            addCell(severityTable, String.valueOf(entry.getValue()), false);
+            addCellCentered(severityTable, entry.getKey(), false);
+            addCellCentered(severityTable, String.valueOf(entry.getValue()), false);
         }
 
         document.add(severityTable);
     }
 
-    private void addCell(PdfPTable table, String text, boolean header) {
+    private void addCellCentered(PdfPTable table, String text, boolean header) {
         Font font = header
                 ? new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, BaseColor.WHITE)
                 : new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, BaseColor.BLACK);
@@ -219,6 +242,7 @@ public class ReportService {
         PdfPCell cell = new PdfPCell(new Phrase(text, font));
         cell.setPadding(8);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 
         if (header) {
             cell.setBackgroundColor(new BaseColor(79, 70, 229));
