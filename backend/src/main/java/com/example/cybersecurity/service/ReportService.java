@@ -74,23 +74,35 @@ public class ReportService {
         document.open();
 
         Font systemNameFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD, new BaseColor(37, 99, 235));
-        Font subtitleFont = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, new BaseColor(71, 85, 105));
+
         Font titleFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD, new BaseColor(91, 33, 182));
-        Font headingFont = new Font(Font.FontFamily.HELVETICA, 13, Font.BOLD, new BaseColor(30, 41, 59));
+        Font headingFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, new BaseColor(30, 41, 59));
         Font bodyFont = new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, BaseColor.BLACK);
 
-        addHeader(document, systemNameFont, subtitleFont);
+        // Header with logo and system name (no subtitle)
+        addHeader(document, systemNameFont);
+        
+        // Purple title
         addTitle(document, titleFont, bodyFont);
+        
+        // Section titles centered
+        addCenteredHeading(document, "Incident Summary", headingFont);
         addSummarySection(document, headingFont, total, assigned, fixing, solved);
+        
+        addCenteredHeading(document, "Specialist Workload Distribution", headingFont);
         addSpecialistSection(document, headingFont, specialistCounts);
+        
+        addCenteredHeading(document, "Incidents by Category", headingFont);
         addCategorySection(document, headingFont, categoryCounts);
+        
+        addCenteredHeading(document, "Incidents by Severity", headingFont);
         addSeveritySection(document, headingFont, severityCounts);
 
         document.close();
         return outputStream.toByteArray();
     }
 
-    private void addHeader(Document document, Font systemNameFont, Font subtitleFont) throws Exception {
+    private void addHeader(Document document, Font systemNameFont) throws Exception {
         PdfPTable headerTable = new PdfPTable(2);
         headerTable.setWidthPercentage(100);
         headerTable.setWidths(new float[]{1.2f, 4f});
@@ -119,15 +131,23 @@ public class ReportService {
         Paragraph systemName = new Paragraph("Cyber Security Incident Management System", systemNameFont);
         systemName.setSpacingAfter(4);
 
-        Paragraph subtitle = new Paragraph("Administrative Security Incident Report", subtitleFont);
+
 
         textCell.addElement(systemName);
-        textCell.addElement(subtitle);
+
 
         headerTable.addCell(logoCell);
         headerTable.addCell(textCell);
 
         document.add(headerTable);
+    }
+
+    private void addCenteredHeading(Document document, String text, Font headingFont) throws Exception {
+        Paragraph heading = new Paragraph(text, headingFont);
+        heading.setAlignment(Element.ALIGN_CENTER);
+        heading.setSpacingBefore(20);
+        heading.setSpacingAfter(10);
+        document.add(heading);
     }
 
     private void addTitle(Document document, Font titleFont, Font bodyFont) throws Exception {
@@ -154,12 +174,12 @@ public class ReportService {
 
     private void addSummarySection(Document document, Font headingFont,
                                    int total, int assigned, int fixing, int solved) throws Exception {
-        document.add(new Paragraph("Incident Summary", headingFont));
-        document.add(new Paragraph(" "));
+
 
         PdfPTable summaryTable = new PdfPTable(2);
         summaryTable.setWidthPercentage(60);
         summaryTable.setSpacingAfter(20);
+        summaryTable.setHorizontalAlignment(Element.ALIGN_CENTER);
 
         addCellCentered(summaryTable, "Total Incidents", true);
         addCellCentered(summaryTable, String.valueOf(total), false);
@@ -178,12 +198,12 @@ public class ReportService {
 
     private void addSpecialistSection(Document document, Font headingFont,
                                       Map<String, Integer> specialistCounts) throws Exception {
-        document.add(new Paragraph("Specialist Workload Distribution", headingFont));
-        document.add(new Paragraph(" "));
+
 
         PdfPTable specialistTable = new PdfPTable(2);
         specialistTable.setWidthPercentage(70);
         specialistTable.setSpacingAfter(20);
+        specialistTable.setHorizontalAlignment(Element.ALIGN_CENTER);
 
         addCellCentered(specialistTable, "Specialist Role", true);
         addCellCentered(specialistTable, "Incidents Handled", true);
@@ -198,12 +218,12 @@ public class ReportService {
 
     private void addCategorySection(Document document, Font headingFont,
                                     Map<String, Integer> categoryCounts) throws Exception {
-        document.add(new Paragraph("Incidents by Category", headingFont));
-        document.add(new Paragraph(" "));
+
 
         PdfPTable categoryTable = new PdfPTable(2);
         categoryTable.setWidthPercentage(70);
         categoryTable.setSpacingAfter(20);
+        categoryTable.setHorizontalAlignment(Element.ALIGN_CENTER);
 
         addCellCentered(categoryTable, "Category", true);
         addCellCentered(categoryTable, "Count", true);
@@ -218,11 +238,11 @@ public class ReportService {
 
     private void addSeveritySection(Document document, Font headingFont,
                                     Map<String, Integer> severityCounts) throws Exception {
-        document.add(new Paragraph("Incidents by Severity", headingFont));
-        document.add(new Paragraph(" "));
+                                        
 
         PdfPTable severityTable = new PdfPTable(2);
         severityTable.setWidthPercentage(70);
+        severityTable.setHorizontalAlignment(Element.ALIGN_CENTER);
 
         addCellCentered(severityTable, "Severity", true);
         addCellCentered(severityTable, "Count", true);
