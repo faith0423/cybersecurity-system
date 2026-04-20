@@ -30,6 +30,7 @@ public class ReportService {
         List<Incident> incidents = incidentRepository.findAll();
 
         int total = incidents.size();
+        
         int assigned = 0;
         int fixing = 0;
         int solved = 0;
