@@ -3,38 +3,50 @@ package com.example.cybersecurity.service;
 import com.example.cybersecurity.model.Incident;
 import com.example.cybersecurity.model.User;
 import com.example.cybersecurity.repository.UserRepository;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.Attachment;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import jakarta.mail.internet.MimeMessage;
+import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import jakarta.activation.DataSource;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Base64;
 
 @Service
 public class NotificationEmailService {
 
-    private final JavaMailSender mailSender;
     private final UserRepository userRepository;
+    private Resend resend;
 
-    @Value("${spring.mail.username}")
-    private String systemSenderEmail;
+    @Value("${resend.api.key}")
+    private String apiKey;
+
+    @Value("${resend.from.email:cyberincident.managment@gmail.com}")
+    private String fromEmail;
 
     @Value("${report.recipient.email}")
     private String reportRecipientEmail;
 
-    public NotificationEmailService(JavaMailSender mailSender, UserRepository userRepository) {
-        this.mailSender = mailSender;
+    public NotificationEmailService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    @Async
 
+    @Async
     public void sendIncidentSolvedNotification(Incident incident, String resolvedBy) {
+        // Initialize Resend with API key
+        this.resend = new Resend(apiKey);
+
         List<User> admins = userRepository.findByRole("ADMIN");
 
         if (admins.isEmpty()) {
@@ -64,7 +76,7 @@ public class NotificationEmailService {
                 Further details can be accessed on the system.
 
                 Regards,
-                Cyber Incident Management System
+                Cyber Security Incident Management System
                 """.formatted(
                 safe(incident.getTitle()),
                 safe(incident.getCreatedBy()),
@@ -82,61 +94,62 @@ public class NotificationEmailService {
                     continue;
                 }
 
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setFrom(systemSenderEmail);
-                message.setTo(admin.getEmail());
-                message.setSubject(subject);
-                message.setText(body);
+                CreateEmailOptions options = CreateEmailOptions.builder()
+                        .from(fromEmail)
+                        .to(admin.getEmail())
+                        .subject(subject)
+                        .html(body.replace("\n", "<br/>"))
+                        .build();
 
-                mailSender.send(message);
-                System.out.println("Incident solved email sent successfully from: " + systemSenderEmail + " to: " + admin.getEmail());
+                CreateEmailResponse response = resend.emails().send(options);
+                System.out.println("Incident solved email sent successfully to: " + admin.getEmail() + ", ID: " + response.getId());
 
-            } catch (Exception e) {
-                System.out.println("Failed to send incident solved email from: " + systemSenderEmail + " to: " + admin.getEmail());
+            } catch (ResendException e) {
+                System.out.println("Failed to send incident solved email to: " + admin.getEmail());
                 e.printStackTrace();
             }
         }
     }
 
-
     public void sendIncidentReportPdf(byte[] pdfBytes, String generatedBy) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+    // Initialize Resend with API key
+    this.resend = new Resend(apiKey);
 
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    try {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-            helper.setFrom(systemSenderEmail);
-            helper.setTo(reportRecipientEmail);
-            helper.setSubject("Cybersecurity Incident PDF Report");
-            helper.setText("""
-                    Hello,
+        String body = """
+                Hello,
 
-                    Please find attached the latest Cybersecurity Incident PDF Report.
+                A new Cybersecurity Incident PDF Report has been generated.
 
-                    Generated by: %s
-                    Generated on: %s
+                Generated by: %s
+                Generated on: %s
 
-                    Regards,
-                    Cyber Incident Management System
-                    """.formatted(
-                    generatedBy == null || generatedBy.isBlank() ? "Unknown" : generatedBy,
-                    timestamp
-            ));
+                You can download the report using the Download PDF button in the system.
 
-            helper.addAttachment(
-                    "incident-report.pdf",
-                    new ByteArrayResource(pdfBytes)
-            );
+                Regards,
+                Cyber Security Incident Management System
+                """.formatted(
+                generatedBy == null || generatedBy.isBlank() ? "Unknown" : generatedBy,
+                timestamp
+        );
 
-            mailSender.send(message);
-            System.out.println("PDF report email sent successfully to: " + reportRecipientEmail);
+        CreateEmailOptions options = CreateEmailOptions.builder()
+                .from(fromEmail)
+                .to(reportRecipientEmail)
+                .subject("Cybersecurity Incident PDF Report - Ready for Download")
+                .html(body.replace("\n", "<br/>"))
+                .build();
 
-        } catch (Exception e) {
-            System.out.println("Failed to send PDF report email to: " + reportRecipientEmail);
-            e.printStackTrace();
-        }
+        CreateEmailResponse response = resend.emails().send(options);
+        System.out.println("PDF report email sent successfully to: " + reportRecipientEmail + ", ID: " + response.getId());
+
+    } catch (ResendException e) {
+        System.out.println("Failed to send PDF report email to: " + reportRecipientEmail);
+        e.printStackTrace();
     }
+}
 
     private String safe(String value) {
         return value == null || value.isBlank() ? "N/A" : value;

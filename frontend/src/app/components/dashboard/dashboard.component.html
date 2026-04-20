@@ -14,24 +14,20 @@
 
   <ng-container *ngIf="!loading; else loadingState">
 
-    <section class="stats-grid">
-      <article class="stat-card">
-        <span>Total Incidents</span>
-        <h2>{{ total }}</h2>
-      </article>
-      <article class="stat-card">
-        <span>Submitted</span>
-        <h2>{{ submitted }}</h2>
-      </article>
-      <article class="stat-card stat-card-active">
-        <span>In Progress</span>
-        <h2>{{ inProgress }}</h2>
-      </article>
-      <article class="stat-card stat-card-solved">
-        <span>Solved</span>
-        <h2>{{ solved }}</h2>
-      </article>
-    </section>
+    <section class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+  <article class="stat-card">
+    <span>Total Incidents</span>
+    <h2>{{ total }}</h2>
+  </article>
+  <article class="stat-card stat-card-active">
+    <span>In Progress</span>
+    <h2>{{ inProgress }}</h2>
+  </article>
+  <article class="stat-card stat-card-solved">
+    <span>Solved</span>
+    <h2>{{ solved }}</h2>
+  </article>
+</section>
 
     <section class="insight-card">
       <div class="insight-header">
