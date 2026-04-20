@@ -4,35 +4,25 @@ import com.example.cybersecurity.model.Incident;
 import com.example.cybersecurity.model.User;
 import com.example.cybersecurity.repository.UserRepository;
 import com.resend.Resend;
-import com.resend.core.exception.ResendException;
-import com.resend.services.emails.model.Attachment;
 import com.resend.services.emails.model.CreateEmailOptions;
 import com.resend.services.emails.model.CreateEmailResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import jakarta.activation.DataSource;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Base64;
 
 @Service
 public class NotificationEmailService {
 
     private final UserRepository userRepository;
-    private Resend resend;
 
     @Value("${resend.api.key}")
     private String apiKey;
 
-    @Value("${resend.from.email:cyberincident.managment@gmail.com}")
+    @Value("${resend.from.email}")
     private String fromEmail;
 
     @Value("${report.recipient.email}")
@@ -44,39 +34,36 @@ public class NotificationEmailService {
 
     @Async
     public void sendIncidentSolvedNotification(Incident incident, String resolvedBy) {
-        // Initialize Resend with API key
-        this.resend = new Resend(apiKey);
+        if (apiKey == null || apiKey.isBlank()) {
+            System.out.println("Resend API key is missing. Email not sent.");
+            return;
+        }
 
+        Resend resend = new Resend(apiKey);
+        
         List<User> admins = userRepository.findByRole("ADMIN");
-
         if (admins.isEmpty()) {
-            System.out.println("No admin users found. Email not sent.");
+            System.out.println("No admin users found.");
             return;
         }
 
         String subject = "Incident Solved Notification - " + safe(incident.getTitle());
-
+        
         String createdAtText = incident.getCreatedAt() != null
                 ? incident.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 : "Unknown";
 
         String body = """
-                Hello Admin,
-
-                An incident has been marked as SOLVED.
-
-                Incident Title: %s
-                Logged By: %s
-                Date and Time Logged: %s
-                Assigned To Role: %s
-                Resolved By: %s
-                Current Status: %s
-                Recommendation: %s
-
-                Further details can be accessed on the system.
-
-                Regards,
-                Cyber Security Incident Management System
+                <h2>Incident Solved</h2>
+                <p><strong>Title:</strong> %s</p>
+                <p><strong>Logged By:</strong> %s</p>
+                <p><strong>Date Logged:</strong> %s</p>
+                <p><strong>Assigned Role:</strong> %s</p>
+                <p><strong>Resolved By:</strong> %s</p>
+                <p><strong>Status:</strong> %s</p>
+                <p><strong>Recommendation:</strong> %s</p>
+                <br/>
+                <p>Regards,<br/>Cyber Security Incident Management System</p>
                 """.formatted(
                 safe(incident.getTitle()),
                 safe(incident.getCreatedBy()),
@@ -89,67 +76,58 @@ public class NotificationEmailService {
 
         for (User admin : admins) {
             try {
-                if (admin.getEmail() == null || admin.getEmail().isBlank()) {
-                    System.out.println("Admin email is blank. Skipping.");
-                    continue;
-                }
-
                 CreateEmailOptions options = CreateEmailOptions.builder()
                         .from(fromEmail)
                         .to(admin.getEmail())
                         .subject(subject)
-                        .html(body.replace("\n", "<br/>"))
+                        .html(body)
                         .build();
-
                 CreateEmailResponse response = resend.emails().send(options);
-                System.out.println("Incident solved email sent successfully to: " + admin.getEmail() + ", ID: " + response.getId());
-
-            } catch (ResendException e) {
-                System.out.println("Failed to send incident solved email to: " + admin.getEmail());
+                System.out.println("Email sent to: " + admin.getEmail() + " - ID: " + response.getId());
+            } catch (Exception e) {
+                System.err.println("Failed to send to: " + admin.getEmail());
                 e.printStackTrace();
             }
         }
     }
 
     public void sendIncidentReportPdf(byte[] pdfBytes, String generatedBy) {
-    // Initialize Resend with API key
-    this.resend = new Resend(apiKey);
+        if (apiKey == null || apiKey.isBlank()) {
+            System.out.println("Resend API key is missing. Email not sent.");
+            return;
+        }
 
-    try {
+        Resend resend = new Resend(apiKey);
+        
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
+        
         String body = """
-                Hello,
-
-                A new Cybersecurity Incident PDF Report has been generated.
-
-                Generated by: %s
-                Generated on: %s
-
-                You can download the report using the Download PDF button in the system.
-
-                Regards,
-                Cyber Security Incident Management System
+                <h2>PDF Report Ready</h2>
+                <p>Your Cybersecurity Incident PDF Report has been generated.</p>
+                <p><strong>Generated by:</strong> %s</p>
+                <p><strong>Generated on:</strong> %s</p>
+                <p>You can download the report using the Download PDF button in the system.</p>
+                <br/>
+                <p>Regards,<br/>Cyber Security Incident Management System</p>
                 """.formatted(
                 generatedBy == null || generatedBy.isBlank() ? "Unknown" : generatedBy,
                 timestamp
         );
 
-        CreateEmailOptions options = CreateEmailOptions.builder()
-                .from(fromEmail)
-                .to(reportRecipientEmail)
-                .subject("Cybersecurity Incident PDF Report - Ready for Download")
-                .html(body.replace("\n", "<br/>"))
-                .build();
-
-        CreateEmailResponse response = resend.emails().send(options);
-        System.out.println("PDF report email sent successfully to: " + reportRecipientEmail + ", ID: " + response.getId());
-
-    } catch (ResendException e) {
-        System.out.println("Failed to send PDF report email to: " + reportRecipientEmail);
-        e.printStackTrace();
+        try {
+            CreateEmailOptions options = CreateEmailOptions.builder()
+                    .from(fromEmail)
+                    .to(reportRecipientEmail)
+                    .subject("Cybersecurity Incident PDF Report - Ready for Download")
+                    .html(body)
+                    .build();
+            CreateEmailResponse response = resend.emails().send(options);
+            System.out.println("PDF report email sent to: " + reportRecipientEmail + " - ID: " + response.getId());
+        } catch (Exception e) {
+            System.err.println("Failed to send PDF report email to: " + reportRecipientEmail);
+            e.printStackTrace();
+        }
     }
-}
 
     private String safe(String value) {
         return value == null || value.isBlank() ? "N/A" : value;
