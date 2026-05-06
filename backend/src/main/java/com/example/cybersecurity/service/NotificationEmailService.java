@@ -47,7 +47,7 @@ public class NotificationEmailService {
         }
     }
 public void sendIncidentReportPdf(byte[] pdfBytes, String generatedBy) {
-        mailjetEmailService.sendPdfReportEmail("amomokoena04@gmail.com", generatedBy);
+        mailjetEmailService.sendPdfReportEmail("amomokoena04@gmail.com", generatedBy, pdfBytes);
     }
 
     
