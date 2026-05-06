@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 @Service
@@ -192,6 +193,82 @@ public class IncidentService {
         }
         return authentication.getName();
     }
+public Map<String, Object> predictEscalationRisk(Incident incident) {
+    Map<String, Object> prediction = new HashMap<>();
+    
+    String text = ((incident.getTitle() == null ? "" : incident.getTitle()) + " " + 
+                   (incident.getDescription() == null ? "" : incident.getDescription())).toLowerCase();
+    
+    // Simple scoring algorithm
+    int riskScore = 0;
+    
+    // Keyword scoring
+    if (containsAny(text, "urgent", "critical", "emergency", "immediate", "severe")) {
+        riskScore += 30;
+    }
+    if (containsAny(text, "breach", "ransomware", "data leak", "compromised")) {
+        riskScore += 40;
+    }
+    if (containsAny(text, "network", "server", "database", "all users")) {
+        riskScore += 15;
+    }
+    
+    // Length scoring (longer descriptions might be more serious)
+    if (incident.getDescription() != null && incident.getDescription().length() > 200) {
+        riskScore += 10;
+    }
+    
+    // Severity based scoring
+    if (incident.getSeverity() != null) {
+        switch (incident.getSeverity().toUpperCase()) {
+            case "CRITICAL":
+                riskScore += 50;
+                break;
+            case "HIGH":
+                riskScore += 30;
+                break;
+            case "MEDIUM":
+                riskScore += 15;
+                break;
+        }
+    }
+    
+    // Cap at 100
+    riskScore = Math.min(riskScore, 100);
+    
+    // Determine prediction
+    String riskLevel;
+    String recommendation;
+    String predictedTimeframe;
+    
+    if (riskScore >= 70) {
+        riskLevel = "HIGH";
+        recommendation = "Immediate attention required. Escalate to senior security team.";
+        predictedTimeframe = "4 hours";
+    } else if (riskScore >= 40) {
+        riskLevel = "MEDIUM";
+        recommendation = "Monitor closely. Review within 2 hours.";
+        predictedTimeframe = "12 hours";
+    } else {
+        riskLevel = "LOW";
+        recommendation = "Standard handling. Review within 24 hours.";
+        predictedTimeframe = "24 hours";
+    }
+    
+    prediction.put("riskScore", riskScore);
+    prediction.put("riskLevel", riskLevel);
+    prediction.put("recommendation", recommendation);
+    prediction.put("predictedTimeframe", predictedTimeframe);
+    
+    return prediction;
+}
 
+// Helper method for containsAny (if not already in this class)
+private boolean containsAny(String text, String... keywords) {
+    for (String keyword : keywords) {
+        if (text.contains(keyword)) return true;
+    }
+    return false;
+}
 
 }

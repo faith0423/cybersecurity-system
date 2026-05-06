@@ -2,6 +2,8 @@ package com.example.cybersecurity.service;
 
 import org.springframework.stereotype.Service;
 
+import com.example.cybersecurity.model.Incident;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,4 +111,69 @@ public class AiService {
         }
         return false;
     }
+    // Add this method to your existing AiService class
+public Map<String, Object> predictEscalationRisk(Incident incident) {
+    Map<String, Object> prediction = new HashMap<>();
+    
+    String text = ((incident.getTitle() == null ? "" : incident.getTitle()) + " " + 
+                   (incident.getDescription() == null ? "" : incident.getDescription())).toLowerCase();
+    
+    // Simple scoring algorithm
+    int riskScore = 0;
+    
+    // Keyword scoring
+    if (containsAny(text, "urgent", "critical", "emergency", "immediate", "severe")) {
+        riskScore += 30;
+    }
+    if (containsAny(text, "breach", "ransomware", "data leak", "compromised")) {
+        riskScore += 40;
+    }
+    if (containsAny(text, "network", "server", "database", "all users")) {
+        riskScore += 15;
+    }
+    
+    // Length scoring (longer descriptions might be more serious)
+    if (incident.getDescription() != null && incident.getDescription().length() > 200) {
+        riskScore += 10;
+    }
+    
+    // Severity based scoring
+    if (incident.getSeverity() != null) {
+        switch (incident.getSeverity().toUpperCase()) {
+            case "CRITICAL":
+                riskScore += 50;
+                break;
+            case "HIGH":
+                riskScore += 30;
+                break;
+            case "MEDIUM":
+                riskScore += 15;
+                break;
+        }
+    }
+    
+    // Cap at 100
+    riskScore = Math.min(riskScore, 100);
+    
+    // Determine prediction
+    String riskLevel;
+    String recommendation;
+    if (riskScore >= 70) {
+        riskLevel = "HIGH";
+        recommendation = "Immediate attention required. Escalate to senior security team.";
+    } else if (riskScore >= 40) {
+        riskLevel = "MEDIUM";
+        recommendation = "Monitor closely. Review within 2 hours.";
+    } else {
+        riskLevel = "LOW";
+        recommendation = "Standard handling. Review within 24 hours.";
+    }
+    
+    prediction.put("riskScore", riskScore);
+    prediction.put("riskLevel", riskLevel);
+    prediction.put("recommendation", recommendation);
+    prediction.put("predictedTimeframe", riskScore >= 70 ? "4 hours" : riskScore >= 40 ? "12 hours" : "24 hours");
+    
+    return prediction;
+}
 }
