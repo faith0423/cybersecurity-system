@@ -82,7 +82,7 @@ public class MailjetEmailService {
             MailjetClient client = getClient();
             
             // Encode PDF to Base64
-            String encodedPdf = Base64.getEncoder().encodeToString(pdfBytes);
+            String encodedPdf = Base64.getEncoder().withoutPadding().encodeToString(pdfBytes);
             
             MailjetRequest request = new MailjetRequest(Emailv31.resource)
                     .property(Emailv31.MESSAGES, new JSONArray()
