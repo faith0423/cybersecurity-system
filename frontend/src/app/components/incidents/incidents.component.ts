@@ -202,16 +202,27 @@ export class IncidentsComponent implements OnInit {
   });
 }
 emailPdfReport(): void {
-  console.log('Email PDF Report button clicked');
-  this.incidentService.emailIncidentReport().subscribe({
-    next: (response) => {
-      console.log('Email sent successfully:', response);
-      alert('PDF report has been emailed successfully!');
+  console.log('Sending email...');
+  const token = localStorage.getItem('token');
+  
+  fetch('https://cybersecurity-system-production.up.railway.app/api/reports/incidents/pdf/email', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     },
-    error: (error) => {
-      console.error('Email failed:', error);
-      alert('Failed to send email. Please try again.');
+    body: JSON.stringify({})
+  })
+  .then(response => {
+    if (response.ok) {
+      alert('Email sent successfully!');
+    } else {
+      alert('Failed to send email. Status: ' + response.status);
     }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to send email.');
   });
 }
   private mustContainLettersValidator(): Validators {
