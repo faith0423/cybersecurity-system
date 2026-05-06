@@ -28,6 +28,17 @@
     <h2>{{ solved }}</h2>
   </article>
 </section>
+<div class="prediction-card" *ngIf="recentIncidents.length > 0">
+  <h3>Predictive Risk Analysis</h3>
+  <div *ngFor="let incident of recentIncidents.slice(0, 3)">
+    <div class="prediction-item">
+      <span>{{ incident.title }}</span>
+      <span class="risk-{{ incident.predictedRiskLevel?.toLowerCase() }}">
+        Risk: {{ incident.predictedRiskLevel || 'N/A' }} ({{ incident.predictedRiskScore }}/100)
+      </span>
+    </div>
+  </div>
+</div>
 
     <section class="insight-card">
       <div class="insight-header">
