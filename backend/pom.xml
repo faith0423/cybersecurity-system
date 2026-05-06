@@ -86,6 +86,11 @@
             <artifactId>itextpdf</artifactId>
             <version>5.5.13.3</version>
         </dependency>
+        <dependency>
+    <groupId>com.mailjet</groupId>
+    <artifactId>mailjet-client</artifactId>
+    <version>5.2.5</version>
+</dependency>
        
     </dependencies>
 
