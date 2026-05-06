@@ -202,12 +202,15 @@ export class IncidentsComponent implements OnInit {
   });
 }
 emailPdfReport(): void {
+  console.log('Email PDF Report button clicked');
   this.incidentService.emailIncidentReport().subscribe({
-    next: (message) => {
-      alert(message);
+    next: (response) => {
+      console.log('Email sent successfully:', response);
+      alert('PDF report has been emailed successfully!');
     },
-    error: () => {
-      this.errorMessage = 'Could not email PDF report.';
+    error: (error) => {
+      console.error('Email failed:', error);
+      alert('Failed to send email. Please try again.');
     }
   });
 }

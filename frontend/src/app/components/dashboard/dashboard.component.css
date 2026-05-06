@@ -216,3 +216,146 @@ th { font-weight: 700; font-size: 11px; color: #94a3b8; text-transform: uppercas
   .hero-card    { flex-direction: column; align-items: flex-start; }
   .insight-header { flex-direction: column; align-items: flex-start; }
 }
+/* Predictive Analysis Card Styles */
+.prediction-card {
+  margin-top: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: #0f172ad1;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 40px #02061759;
+}
+
+.prediction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.prediction-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #f8fafc;
+}
+
+.prediction-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: #8b5cf62e;
+  color: #c4b5fd;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.prediction-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.prediction-item {
+  background: #1e293b59;
+  border-radius: 16px;
+  padding: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.prediction-title {
+  font-weight: 600;
+  color: #f8fafc;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prediction-details {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+}
+
+.risk-label {
+  color: #94a3b8;
+}
+
+.risk-value {
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.risk-high {
+  background: #dc26264d;
+  color: #fca5a5;
+}
+
+.risk-medium {
+  background: #f59e0b4d;
+  color: #fde68a;
+}
+
+.risk-low {
+  background: #16a34a4d;
+  color: #86efac;
+}
+
+.risk-very-low {
+  background: #64748b4d;
+  color: #cbd5e1;
+}
+
+.risk-score {
+  color: #94a3b8;
+  font-size: 0.7rem;
+}
+
+.prediction-timeframe {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-top: 0.5rem;
+}
+
+.prediction-footer {
+  text-align: center;
+  padding: 1rem;
+  color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+  .prediction-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.prediction-score {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.score-value {
+  color: #c4b5fd;
+  font-weight: 600;
+  margin-left: 0.25rem;
+}
+
+.timeframe-value {
+  color: #86efac;
+  font-weight: 600;
+  margin-left: 0.25rem;
+}
+
+.prediction-timeframe {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.timeframe-value {
+  color: #86efac;
+  font-weight: 600;
+  margin-left: 0.25rem;
+}

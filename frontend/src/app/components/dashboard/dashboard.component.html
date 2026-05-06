@@ -28,14 +28,30 @@
     <h2>{{ solved }}</h2>
   </article>
 </section>
+<!-- PREDICTIVE RISK ANALYSIS CARD -->
+<!-- PREDICTIVE RISK ANALYSIS CARD -->
 <div class="prediction-card" *ngIf="recentIncidents.length > 0">
-  <h3>Predictive Risk Analysis</h3>
-  <div *ngFor="let incident of recentIncidents.slice(0, 3)">
-    <div class="prediction-item">
-      <span>{{ incident.title }}</span>
-      <span class="risk-{{ incident.predictedRiskLevel?.toLowerCase() }}">
-        Risk: {{ incident.predictedRiskLevel || 'N/A' }} ({{ incident.predictedRiskScore }}/100)
-      </span>
+  <div class="prediction-header">
+    <h3>⚡ Predictive Risk Analysis</h3>
+    <span class="prediction-badge">AI-Powered Forecast</span>
+  </div>
+  <div class="prediction-grid">
+    <div *ngFor="let incident of recentIncidents.slice(0, 3)" class="prediction-item">
+      <div class="prediction-title">{{ incident.title }}</div>
+      <div class="prediction-details">
+        <span class="risk-label">Risk Level:</span>
+        <span class="risk-value" [ngClass]="getRiskClass(incident.predictedRiskLevel)">
+          {{ incident.predictedRiskLevel || 'Calculating...' }}
+        </span>
+      </div>
+      <div class="prediction-score" *ngIf="incident.predictedRiskScore">
+        <span class="risk-label">Risk Score:</span>
+        <span class="score-value">{{ incident.predictedRiskScore }}/100</span>
+      </div>
+      <div class="prediction-timeframe" *ngIf="incident.predictedTimeframe">
+        <span class="risk-label">⏱️ Escalation:</span>
+        <span class="timeframe-value">{{ incident.predictedTimeframe }}</span>
+      </div>
     </div>
   </div>
 </div>

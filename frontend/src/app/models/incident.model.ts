@@ -10,4 +10,8 @@ export interface Incident {
   recommendation?: string;
   assignedRole?: string;
   userId?: number;
+  // PREDICTIVE ANALYSIS FIELDS - Add these
+  predictedRiskLevel?: string;
+  predictedRiskScore?: number;
+  predictedTimeframe?: string;
 }

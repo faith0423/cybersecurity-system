@@ -39,6 +39,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.incidents = data;
         this.loading = false;
+        console.log('Incidents with predictions:', data.map(i => ({ 
+          title: i.title, 
+          predictedRiskLevel: i.predictedRiskLevel,
+          predictedRiskScore: i.predictedRiskScore 
+        })));
         setTimeout(() => this.renderCharts(), 0);
       },
       error: () => { this.loading = false; }
@@ -110,6 +115,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
       case 'ASSIGNED': return 'status status-assigned';
       default:         return 'status status-submitted';
     }
+    
+  }
+  
+
+  // Helper to get risk level class for styling
+  getRiskClass(riskLevel?: string): string {
+    if (!riskLevel) return 'risk-unknown';
+    return `risk-${riskLevel.toLowerCase()}`;
   }
 
   private renderCharts(): void {

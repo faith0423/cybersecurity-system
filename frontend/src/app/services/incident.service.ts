@@ -52,14 +52,11 @@ export class IncidentService {
     }
   });
 }
-   emailIncidentReport(): Observable<string> {
+  emailIncidentReport(): Observable<string> {
   const token = localStorage.getItem('token');
-
-  return this.http.post(`${this.baseUrl}/api/reports/incidents/pdf/email`, {}, {
+  return this.http.post('https://cybersecurity-system-production.up.railway.app/api/reports/incidents/pdf/email', {}, {
     responseType: 'text',
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+    headers: { Authorization: `Bearer ${token}` }
   });
 }
 }
